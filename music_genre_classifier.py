@@ -1,13 +1,44 @@
 import numpy as np
+from collections import defaultdict
+import os
+import random
+import pickle
+import operator
 
+def get_neighbours(training_set: list, instance: dict, k: int) -> list:
+    """
+    This functions computes and returns the distance between feature vectors and finds k neighbours
 
-def distance(first_instance, second_instance, k):
+    :param training_set: The list used to compare the instance to
+    :param instance: the instance for classification
+    :param k: the number of neighbours
+    :return: list neighbours
     """
 
-    :param first_instance:
-    :param second_instance:
-    :param k:
-    :return:
+    distances = []
+    for x in range(len(training_set)):
+        dist = distance(training_set[x], instance, k) + distance(instance, training_set[x], k)
+        distances.append((training_set[x][2], dist))
+
+    # experiment with what the key param does here
+    distances.sort(key=operator.itemgetter(1))
+    neighbours = []
+
+    for x in range(k):
+        neighbours.append(distances[x][0])
+
+    return neighbours
+
+
+def distance(first_instance: list, second_instance: list, k: int) -> float:
+    """
+    This fucntion calculates the distance between two points based on the cosine similarity calculation:
+    cos(theta) = A dot product B / abs(A . B)
+
+    :param first_instance: list containing mean matrix, covariance and folder index number
+    :param second_instance: list containing mean matrix, covariance and folder index number
+    :param k: the number of nearest neighbours
+    :return: The distance between the two instances
     """
 
     distance = 0
